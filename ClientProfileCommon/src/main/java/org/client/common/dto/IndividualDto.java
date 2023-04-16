@@ -85,7 +85,7 @@ public class IndividualDto {
 
     @Hidden
     @JsonProperty(Fields.WALLET)
-    private Collection<WalletDto> wallet;
+    private WalletDto wallet;
 
     @JsonProperty(Fields.AVATAR)
     private Collection<AvatarDto> avatar;

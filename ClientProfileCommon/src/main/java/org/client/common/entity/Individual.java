@@ -1,9 +1,7 @@
 package org.client.common.entity;
 
 import lombok.*;
-import org.client.common.entity.Contacts.Email;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -44,22 +42,24 @@ public class Individual {
     @OneToMany(mappedBy = "individual", cascade = CascadeType.ALL)
     private Collection<RFPassport> passport;
 
+    //Двусторонний OneToOne
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "contactID")
     private ContactMedium contacts;
+
+    //двусторонний  @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "walletID")
+    private WalletMedium wallets;
+
+    @ManyToOne
+    @JoinColumn(name = "avatar_uuid")
+    private Avatar avatar;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name="individ_address",
             joinColumns=  @JoinColumn(name="individ_uuid", referencedColumnName="uuid"),
             inverseJoinColumns= @JoinColumn(name="address_uuid", referencedColumnName="uuid") )
     private Collection<Address> addresses;
-
-    //двусторонний  @OneToMany
-    @OneToMany(mappedBy = "individual", cascade = CascadeType.ALL, orphanRemoval = true)  //у одного клиента может быть много кошельков. Но один кошелек может ссылаться только на одного клиента
-    private Collection<Wallet> wallets;
-
-    @ManyToOne
-    @JoinColumn(name = "avatar_uuid")
-    private Avatar avatar;
 
 }

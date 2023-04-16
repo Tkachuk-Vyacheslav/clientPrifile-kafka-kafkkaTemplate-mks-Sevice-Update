@@ -2,7 +2,9 @@ package org.client.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.client.common.dto.IndividualDto;
 import org.client.common.dto.WalletDto;
+import org.client.common.dto.Wallets.RubWalletDto;
 import org.client.service.WalletService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,40 +28,33 @@ public class WalletController {
 
     @PostMapping("/create/{icp}")
     @Operation(summary = "Создание нового кошелька и его привязка к пользователю по icp пользователя")
-    public ResponseEntity<String> createAddress(@Valid @RequestBody WalletDto dto, @PathVariable(value="icp") String icp) throws Exception {
-        walletService.addWalletForClient(dto.getEuroWallet(), dto.getRubWallet(), dto.getUsdWallet(),
-                dto.getIndividualIcp(), icp);
+    public ResponseEntity<String> createWallet(@RequestBody WalletDto dto, @PathVariable(value="icp") String icp) throws Exception {
+        walletService.addWalletForClient(dto, dto.getIndividualIcp(), icp);
         return ResponseEntity.ok("Wallet  was created successfully!");
-    }
-
-    @GetMapping("/getAll")
-    @Operation(summary = "находим все кошельки")
-    public ResponseEntity<List<WalletDto>> getAllWallets() {
-
-        return new ResponseEntity<>(walletService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/getWalletByClientIcp/{icp}")
     @Operation(summary = "Информация о кошельке по icp клиента")
-    public ResponseEntity<List<WalletDto>> getWalletByClientIcp(@Parameter(description = "icp") String Icp,
+    public ResponseEntity<List<Object>> getWalletByClientIcp(@Parameter(description = "icp") String Icp,
                                                               @PathVariable(value="icp") String icp) throws Exception {
         return new ResponseEntity<>(walletService.getWalletByIcp(icp), HttpStatus.OK);
     }
 
-    @PutMapping("/edit/{uuid}")
-    @Operation(summary = "редактирование кошелька по его uuid")
-    public ResponseEntity<String> editWalletByUuid(@Valid @RequestBody WalletDto dto, @PathVariable(value="uuid") String uuidFromparam) throws Exception {
+    @PutMapping("/edit/{icp}")
+    @Operation(summary = "редактирование кошелька по client icp")
+    public ResponseEntity<String> editWalletByIcpClient(@Valid @RequestBody WalletDto dto, @PathVariable(value="icp") String icpFromparam) throws Exception {
 
-        walletService.editWallet(dto.getUuid(),dto.getIndividualUuid(), dto.getRubWallet(), dto.getEuroWallet(), dto.getUsdWallet(), uuidFromparam);
+      walletService.editWallet(dto , icpFromparam);
         return ResponseEntity.ok("wallet  was updated successfully!");
     }
 
-    @PostMapping("/delete/{uuid}")  //post запрос с walletuuid в  теле
-    @Operation(summary = "удаление кошелька по walletuuid")
-    public ResponseEntity<String> deleteWalletByUuid(@RequestBody WalletDto dto, @PathVariable(value="uuid") String uuidFromparam) throws Exception {
+    @PostMapping("/delete/{icp}")  //post запрос с clientIcp в  теле
+    @Operation(summary = "удаление кошелька по icp client")
+    public ResponseEntity<String> deleteWalletByIcp(@RequestBody IndividualDto dto, @PathVariable(value="icp") String icp) throws Exception {
 
-        walletService.deleteWallet(dto.getUuid(), uuidFromparam);
+        walletService.deleteWallet(dto, icp);
         return ResponseEntity.ok("wallet  was deleted !");
     }
+
 
 }

@@ -22,6 +22,7 @@ public class InteractionWithCPLoaderImpl implements InteractionWithCPLoader {
     private static final String CP_LOADER = "http://localhost:9092/api/clients";
     private static final String CP_LOADER_Phone = "http://localhost:9092/api/phone";
     private static final String CP_LOADER_Email = "http://localhost:9092/api/email";
+    private static final String CP_LOADER_RubWallet = "http://localhost:9092/api/rubWallet";
     private final RestTemplate restTemplate;
 
     public void updateIndividual(IndividualUpdateDto userUpdate) throws ClientProfileLoaderException {
@@ -53,4 +54,8 @@ public class InteractionWithCPLoaderImpl implements InteractionWithCPLoader {
             throw new ClientProfileLoaderException("Service Client Profile Loader is unavailable");
         }
     }
+
+
+
+
 }

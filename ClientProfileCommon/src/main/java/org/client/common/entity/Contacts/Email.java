@@ -22,12 +22,19 @@ public class Email {
 
     private String value;
 
-    @ManyToOne
-    @JoinColumn(name = "contact_medium_id1")
+    private Boolean verification;
+
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "contactmedium_id")
+//    @ToString.Exclude
+//    private ContactMedium contactMedium;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "contactmedium_id")
     @ToString.Exclude
     private ContactMedium contactMedium;
 
     // verification status
     // . email have to get verefication in CP_Notification
-    private Boolean verification;
+
 }

@@ -2,6 +2,7 @@ package org.client.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.client.common.dto.WalletDto;
 import org.client.dto.EmailUpdateDto;
 import org.client.dto.IndividualUpdateDto;
 
@@ -20,6 +21,7 @@ public class InteractionWithCPServiceImpl implements InteractionWithCPService {
     private static final String CP_SERVICE = "http://localhost:8080/individual";
     private static final String CP_SERVICE_Phone = "http://localhost:8080/contacts";
     private static final String CP_SERVICE_Email = "http://localhost:8080/contacts/email";
+    private static final String CP_SERVICE_RubWallet = "http://localhost:8080/wallet";
 
 
     private final RestTemplate restTemplate;
@@ -63,4 +65,8 @@ public class InteractionWithCPServiceImpl implements InteractionWithCPService {
         }
 
     }
+
+
+
+
 }

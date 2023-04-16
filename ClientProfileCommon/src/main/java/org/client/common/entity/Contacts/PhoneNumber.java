@@ -21,9 +21,11 @@ public class PhoneNumber {
 
     private String value;
 
-    @ManyToOne
-    @JoinColumn(name = "contact_medium_id1")
+    private Boolean verification;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "contactmedium_id")
     @ToString.Exclude
     private ContactMedium contactMedium;
-    private Boolean verification;
+
 }

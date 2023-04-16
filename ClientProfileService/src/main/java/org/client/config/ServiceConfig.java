@@ -1,5 +1,6 @@
 package org.client.config;
 
+import org.client.MainApp;
 import org.client.service.AddressService;
 import org.client.service.IndividualService;
 import org.client.service.PassportService;
@@ -42,6 +43,12 @@ public class ServiceConfig {
     public PassportService passportService(IndividualService individualService) {
         return new PassportServiseImpl(individualService);
     }
+
+    @Bean
+    public MainApp mainApp(WalletService walletService) {
+        return new MainApp(walletService);
+    }
+
 
 //    @Bean
 //    public ContactService contactService(IndividualService individualService) {

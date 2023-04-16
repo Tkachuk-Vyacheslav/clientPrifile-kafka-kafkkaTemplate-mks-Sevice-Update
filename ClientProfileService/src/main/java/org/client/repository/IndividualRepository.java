@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.repository.query.Param;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,6 +48,11 @@ public interface IndividualRepository extends JpaRepository<Individual, String>{
     //  ищем пользователя по номеру телефона  (джоин из трех таблиц через jpql)
     @Query("from Individual as indiv join fetch indiv.contacts as cont join fetch cont.phoneNumbers as phnum  where phnum.value = :number")
     Individual findByPhNum(@Param("number") String number);
+
+    //  ищем Optional пользователя по номеру телефона  (джоин из трех таблиц через jpql)
+    @Query("from Individual as indiv join fetch indiv.contacts as cont join fetch cont.phoneNumbers as phnum  where phnum.value = :number")
+    List<Individual> findByPhNumOptional(@Param("number") String number);
+
 
     //  ищем uuid passport юзера по icp юзера
     @Query("from RFPassport as passp join fetch passp.individual as indiv where indiv.icp = :icp")
