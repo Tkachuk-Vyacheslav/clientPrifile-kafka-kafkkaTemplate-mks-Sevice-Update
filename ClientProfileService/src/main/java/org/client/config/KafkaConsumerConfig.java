@@ -1,5 +1,6 @@
 package org.client.config;
 
+
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -27,6 +28,7 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
+    //@Value("${spring.kafka.bootstrap-servers}")
     @Value("localhost:9092")
     private String kafkaServer;
 
@@ -51,7 +53,9 @@ public class KafkaConsumerConfig {
         ConcurrentMessageListenerContainer<String, TransferResultDto> replyContainer = factory.createContainer(replyTopic);
         replyContainer.getContainerProperties().setMissingTopicsFatal(false);
         replyContainer.getContainerProperties().setGroupId(groupId);
+
         return new ReplyingKafkaTemplate<>(pf, replyContainer);
     }
+
 
 }

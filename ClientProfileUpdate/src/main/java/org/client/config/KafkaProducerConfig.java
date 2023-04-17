@@ -33,7 +33,7 @@ public class KafkaProducerConfig {
     public KafkaTemplate<String, TransferResultDto> replyTemplate(ProducerFactory<String, TransferResultDto> pf,
                                                                   ConcurrentKafkaListenerContainerFactory<String, TransferResultDto> factory) {
         KafkaTemplate<String, TransferResultDto> kafkaTemplate = new KafkaTemplate<>(pf);
-        factory.getContainerProperties().setMissingTopicsFatal(false);
+         factory.getContainerProperties().setMissingTopicsFatal(false);
         factory.setReplyTemplate(kafkaTemplate);
         return kafkaTemplate;
     }
@@ -46,5 +46,6 @@ public class KafkaProducerConfig {
         replyContainer.getContainerProperties().setGroupId(groupId);
         return new ReplyingKafkaTemplate<>(pf, replyContainer);
     }
+
 
 }

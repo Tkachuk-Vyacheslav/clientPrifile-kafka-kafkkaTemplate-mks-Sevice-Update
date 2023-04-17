@@ -57,6 +57,15 @@ public class MainApp {
         } else if (total.equals("возникли проблемы с подключением к БД")) {
             transferResultDto.setTransactionResult(" the transaction failed");
             transferResultDto.setDetails("возникли проблемы с подключением к БД");
+        } else if (total.equals("неправильный формат номера телефона")) {
+            transferResultDto.setTransactionResult(" the transaction failed");
+            transferResultDto.setDetails("неправильный формат номера телефона");
+        } else if (total.equals("сумма для перевода не может быть ноль или отрицательной")) {
+            transferResultDto.setTransactionResult(" the transaction failed");
+            transferResultDto.setDetails("сумма для перевода не может быть ноль или отрицательной");
+        } else if (total.equals("Валюта должна быть: EURO, RUB, USD")) {
+            transferResultDto.setTransactionResult(" the transaction failed");
+            transferResultDto.setDetails("Валюта указана неправильно! Валюта должна быть: EURO, RUB, USD");
         }
         return transferResultDto;
     }

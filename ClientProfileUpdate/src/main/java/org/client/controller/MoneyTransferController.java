@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.concurrent.ExecutionException;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -32,13 +33,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class MoneyTransferController {
 
     @Value("${kafka.reuest.topic}")
-    private String requestTopic;
+    private String requestTopic;   //@RequestParam("petId") int petId  ,  @PathVariable(value="icpFromParam") String icpFromParam
 
     @Autowired
     private ReplyingKafkaTemplate<String, MoneyTransferDto, TransferResultDto> replyingKafkaTemplate; // Для того, чтобы отправлять сообщения, нам потребуется объект KafkaTemplate<K, V>
 
-    @PostMapping("/{icpFromParam}")//@PostMapping("/{icpFromParam}") , @PathVariable(value="icpFromParam") String icpFromParam,
-    public ResponseEntity<TransferResultDto> getObject( @RequestBody MoneyTransferDto moneyTransferDto, @PathVariable(value="icpFromParam") String icpFromParam)
+
+    @PostMapping()
+    public ResponseEntity<TransferResultDto> getObject( @RequestBody MoneyTransferDto moneyTransferDto, @RequestParam("icpFromParam") String icpFromParam)
             throws InterruptedException, ExecutionException {
         // evnt == MoneyTransfer ?
         if (!moneyTransferDto.getEvent().equals("MoneyTransfer")) {
@@ -55,13 +57,12 @@ public class MoneyTransferController {
             res.setTransactionName("MoneyTransfer");
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         } else { // transaction is successful?
-            log.info("111 ProducerRecord");
             ProducerRecord<String, MoneyTransferDto> record = new ProducerRecord<>(requestTopic, null, moneyTransferDto.getIcp(), moneyTransferDto);
-            log.info("222 replyingKafkaTemplate.sendAndReceive(record)");
+            log.info("111 ProducerRecord");
             RequestReplyFuture<String, MoneyTransferDto, TransferResultDto> future = replyingKafkaTemplate.sendAndReceive(record);
-            log.info("333 future.get();");
+            log.info("222 RequestReplyFuture");
             ConsumerRecord<String, TransferResultDto> response = future.get();
-            log.info("444 finish response");
+            log.info("333 ConsumerRecord finish response");
             if(response.value().getTransactionResult().equals("the transaction was successful")) {
                 log.info("### successful");
                 return new ResponseEntity<>(response.value(), HttpStatus.OK);

@@ -1,9 +1,14 @@
+
+в МКС PCService, PCUpdate добавлен перевод средств по номеру телефона. 
+Подробнее в readme  мкс PCUpdate
+
+
 НАСТРОЙКИ БД:
 у меня бд не на локалхост , а на 192.168.99.102
 (связано с тем, что мой докер запущен на виртуальной машине)
 
 Дамп моей бд в файле dump.sql (profileLoader)
-(полезная ссылка про дмп бд в докере:
+(полезная ссылка про дамп бд в докере:
 https://davejansen.com/how-to-dump-and-restore-a-postgresql-database-from-a-docker-container/
 )
 
@@ -161,72 +166,51 @@ localhost:8080/passport/getPassportByClientIcp/2345
 
 
 
+ВНИМАНИЕ! по кошелькам были внесены изменения в МКС CPCommon: сделано, как по контактам - есть сущность 
+WalletMedium (связь с индивидуал onetoone), далее идут сущности RubWallet, UsdWallet, EuroWallet-
+ у них связь с WalletMedium OneToOne.
+Сделаны репозитории для каждой сущности в этом МКС
 
+изменились json работы с кошельками:
 
 кошелек:
 
 создать кошелек по icp клиента
-localhost:8080/wallet/create/22560
+localhost:8080/wallet/create/?icp=1219
 {
-"icp": "22560",
-"rubWallet": "10218106452500004933505343",
-"eurWallet": "00031810645250000416123369",
-"usdWallet": "20441610645250000416126507"
+"icp": "1219",
+"rubWallet":
+{
+"value": "200700"
 }
-
-
-найти все кошельки:
-localhost:8080/wallet/getAll
-
-
+,
+"eurWallet":
+{
+"value": "1000"
+}
+,
+"usdWallet":
+{
+"value": "1500"
+}
+}
 
 
 удалить кошелек:
-localhost:8080/wallet/delete/walletUuid
+localhost:8080/wallet/delete/?icp=1220
+icp client!!
 
 {
-"walletUuid": "39870da7-b53c-4426-be6b-96ae746f0203"
+"icp": "1220"
 }
 
 
-схимичим и попытаемся подставит посторонние данные при удалении (имитация злоумышленника):
-
-"walletUuid": "01bc85f5-a39f-4d5f-bce5-64eb37af614e",
-"icp": "22562",
-"rubWallet": "27712310645250124416126568",
-"eurWallet": "27801810645250000416123367",
-"usdWallet": "29841810645250000416126567",
-"walletUuid": "како-то другой ай ди кошелька"
+найти кошелек клиента по icp клиента
+localhost:8076/wallet/getWalletByClientIcp/?icp=1219
 
 
 
 
-
-найти кошельки клиента по icp клиента
-localhost:8080/wallet/getWalletByClientIcp/22562
-
-
-
-
-редактировать кошелек:
-localhost:8080/wallet/edit/4bce9123-68e9-4806-b48f-99531b59979f
-{
-"walletUuid": "4bce9123-68e9-4806-b48f-99531b59979f",
-"individualUuid": "2c9250818742458e0187424aba240001",
-"rubWallet": "91192310645251240417533312",
-"eurWallet": "25101810645250000416111112",
-"usdWallet": "25441810645250000416111111"
-}
-
-попробуем схимичить и подмешать чужой айди:
-{
-"walletUuid": "4bce9123-68e9-4806-b48f-99531b59979f",
-"individualUuid": "2c9250818742458e0187424aba240001",
-"rubWallet": "00092310645251240417533312",
-"eurWallet": "25101810645250000416111112",
-"walletUuid": чужой айди,
-"usdWallet": "25441810645250000416111111"
-}
 
 
 

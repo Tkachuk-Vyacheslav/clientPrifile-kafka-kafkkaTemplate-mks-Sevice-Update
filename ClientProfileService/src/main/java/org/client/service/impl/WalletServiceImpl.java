@@ -104,7 +104,7 @@ public class WalletServiceImpl implements WalletService {
         }
 
         //проверим, что uuid кошельков (евро, руб, доллар) состоит только из цифр
-        boolean isNumeric = euroWallet.chars().allMatch(Character::isDigit);
+        boolean isNumeric = euroWallet.chars().allMatch(Character::isDigit); // используем этот метод, для проверки, что строка состоит из цифр
         if (euroWallet.chars().allMatch(Character::isDigit) == false || usdWallet.chars().allMatch(Character::isDigit) == false ||
                 rubWallet.chars().allMatch(Character::isDigit) == false)
             throw new IncorrectRequestException("uuid кошельков должны состоять только из цифр");
@@ -167,7 +167,7 @@ public class WalletServiceImpl implements WalletService {
 
     }
 
-    @Override //удалить кошелек по uuid
+    @Override //удалить кошелек по client icp
     public void deleteWallet(IndividualDto dto, String icpFromParam) throws Exception {
         if(!dto.getIcp().equals(icpFromParam))
             throw new IncorrectRequestException("icp  в теле запроса и в параметрах должны быть одинаковы");
@@ -186,13 +186,36 @@ public class WalletServiceImpl implements WalletService {
         String failure = "the transaction failed";
         String notEnoughMoney = " не достаточно средств для перевода";
 
+        // проверка на отрицательную сумму для перевода
+        try {
+            if (Double.parseDouble(dto.getPayment()) <= 0 || dto.getPayment() == null)
+                return "сумма для перевода не может быть ноль или отрицательной";
+        } catch (Exception e) { // if was entered "payment": "", empty string
+            return "сумма для перевода не может быть ноль или отрицательной";
+        }
         // find sender by icp
         Individual clientSender = individualRepository.findIndividualByIcp(dto.getIcp()).orElse(new Individual());
         if (clientSender.getUuid() == null)
             return "  не найден отправитель средств c таким icp";
 
+        // валидация номера телефона (допустимый формат номера: +79042348507, либо 89042348507. 8 заменится на +7
+        String s = dto.getPhonenumber();
+        String acceptorPhonenamber = null;
+        // если нулевой символ +, первый симв 7, длина строки 12, и все симв, кроме нулевого- цифры
+        if (s.charAt(0) == '+' && s.charAt(1) == '7' && s.length() == 12
+                && s.substring(1).chars().allMatch(Character::isDigit) == true) {
+            acceptorPhonenamber = s;
+            // если нулевой символ 8, длина строки 11, и все симв, кроме нулевого- цифры
+        } else if(s.charAt(0) == '8' &&  s.length() == 11 &&
+                s.substring(1).chars().allMatch(Character::isDigit) == true) {
+            //Заменим 8 на +7 через StringBuilder
+             acceptorPhonenamber = new StringBuilder(s).replace(0, 1, "+7").toString();
+        } else {
+            return "неправильный формат номера телефона";
+        }
+
         // find acceptor by phonenumber  clientAccepter
-        List<Individual> list = individualRepository.findByPhNumOptional(dto.getPhonenumber());
+        List<Individual> list = individualRepository.findByPhNumOptional(acceptorPhonenamber);
         if(list.size() >= 2) {
             return "найдено несколько клиентов с таким номером тлф";
         } else if (list.size() == 0) {
@@ -209,6 +232,13 @@ public class WalletServiceImpl implements WalletService {
         WalletMedium walletMediumAccepter = walletRepository.findWalletMediumByClientIcpOptional(clientAccepter.getIcp()).orElse(new WalletMedium());
         if (walletMediumAccepter.getUuid() == null)
             throw new IncorrectRequestException(" не найден кошелек для этого получателя средств ");
+
+        if(dto.getCurrency().toString().equals("EURO") || dto.getCurrency().toString().equals("RUB") ||
+           dto.getCurrency().toString().equals("USD")) {
+            //continue
+        } else {
+            return "Валюта должна быть: EURO, RUB, USD";
+        }
 
         if (dto.getCurrency().toString().equals("EURO")) {
 

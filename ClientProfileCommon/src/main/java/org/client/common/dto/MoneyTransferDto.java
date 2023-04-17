@@ -23,7 +23,7 @@ public class MoneyTransferDto {
     @JsonProperty(Fields.event)
     String event;
 
-    @Schema(example = "+7-905-338-94-07", description = "телефон клиента, которому переводят средства")
+    @Schema(example = "+79053389407, 89053389407", description = "телефон клиента, которому переводят средства")
     @JsonProperty(Fields.phonenumber)
     String phonenumber;
 
@@ -33,7 +33,7 @@ public class MoneyTransferDto {
 
     @Schema(example = "RUB, EURO, USD", description = "валюта перевода")
     @JsonProperty(Fields.currency)
-    Сurrency currency;
+    String currency;
 
     @Schema(example = "1219", description = "уникальный идентификатор клиента, который совершает перевод средств")
     @JsonProperty(Fields.icp)
@@ -43,13 +43,13 @@ public class MoneyTransferDto {
 
         public static final String event = "event";
 
-        public static final String phonenumber = "phonenumber";
+        public static final String phonenumber = "accepterPhonenumber";
 
         public static final String payment = "payment";
 
         public static final String currency = "currency";
 
-        public static final String icp = "icp";
+        public static final String icp = "senderIcp";
     }
 
 }
